@@ -126,6 +126,7 @@
   },
   "jest": {
     "setupFilesAfterEnv": ["<rootDir>/test-setup.js", "jest-enzyme"],
-    "testEnvironment": "enzyme"
+    "testEnvironment": "enzyme",
+    "testPathIgnorePatterns": ["/node_modules/", "<rootDir>/scripts/"]
   }
 }
