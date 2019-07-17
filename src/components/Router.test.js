@@ -5,6 +5,6 @@ import Router from './Router';
 describe ("<Router />", () => {
     it ('renders', () => {
         const wrapper = shallow(<Router />);
-        expect(wrapper).not.toBeNull();
+        expect(wrapper).not.toBeEmptyRender();
     });
 });
