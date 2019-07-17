@@ -119,14 +119,12 @@
     "watchPlugins": [
       "jest-watch-typeahead/filename",
       "jest-watch-typeahead/testname"
-    ]
-  },
-  "babel": {
-    "presets": ["react-app"]
-  },
-  "jest": {
+    ],
     "setupFilesAfterEnv": ["<rootDir>/test-setup.js", "jest-enzyme"],
     "testEnvironment": "enzyme",
     "testPathIgnorePatterns": ["/node_modules/", "<rootDir>/scripts/"]
+  },
+  "babel": {
+    "presets": ["react-app"]
   }
 }
