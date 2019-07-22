@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  Divider,
-  Message,
-  Label,
-  Button,
-  Form,
-  Input
-} from "semantic-ui-react";
+import { Divider, Message, Button, Form } from "semantic-ui-react";
 
-const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 class Signup extends React.Component {
   constructor(props) {
@@ -50,7 +43,7 @@ class Signup extends React.Component {
       errors.password = "Password should contain at least one number";
     } else if (
       data.password &&
-      !/[~|!|@|#|$|%|^|&|*|_|\-|+|=|`|\||\\|\(|\)|{|}|\[|\]|:|;|"|'|<|>|,|\.|\?|\/]/.test(
+      !/[~|!|@|#|$|%|^|&|*|_|\-|+|=|`|||\\|(|)|{|}|[|\]|:|;|"|'|<|>|,|.|?|/]/.test(
         data.password
       )
     ) {
