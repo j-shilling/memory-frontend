@@ -76,21 +76,6 @@ class Signup extends React.Component {
     });
   };
 
-  passwordErrors = () => {
-    return null;
-  };
-
-  confirmPasswordErrors = () => {
-    if (
-      this.state.confirmPassword &&
-      this.state.password !== this.state.confirmPassword
-    ) {
-      return "Does not match";
-    }
-
-    return null;
-  };
-
   render() {
     const errors = Object.values(this.state.errors).filter(
       message => !!message
