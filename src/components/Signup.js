@@ -49,6 +49,8 @@ class Signup extends React.Component {
     ) {
       errors.password =
         "Password should contain at least one of the following special characters: (~!@#$%^&*_-+=`|(){}[]:;\"'<>,.?/)";
+    } else if (data.password && /\s/g.test(data.password)) {
+        errors.password = "Passwords should not include any whitespace characters (spaces, tabs, etc.)";
     } else {
       errors.password = "";
     }
