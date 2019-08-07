@@ -11,14 +11,39 @@ describe("<Signup />", () => {
     confirmPassword: "p@ssw0rd"
   };
 
+  const getChangeEvent = (name, value = "") => {
+    return { target: { name, value } };
+  };
+
+  const wrapper = shallow(<Signup />);
+  const form = () => wrapper.find("Form").first();
+  const message = () => wrapper.find("Form Message").first();
+  const submit = () => wrapper.find("Form Button").first();
+
+  const getInput = field => wrapper.find(`FormInput[name="${field}"]`).first();
+
+  const buildInputGetter = field => {
+    return () => getInput(field);
+  };
+
+  const resetWrapper = () => {
+    const inputs = wrapper.find("Form FormInput");
+    for (let i = 0; i < inputs.length; i++) {
+      const input = inputs.at(i);
+      input.simulate("change", getChangeEvent(input.prop("name")));
+    }
+  };
+
+  const getInputSelector = field => `Form FormInput[name="${field}"]`;
+
   describe("User sees inputs", () => {
-    const wrapper = shallow(<Signup />);
+    resetWrapper();
     it("User sees a form element", () => {
       expect(wrapper).toContainExactlyOneMatchingElement("Form");
     });
     const testField = field => {
       expect(wrapper).toContainExactlyOneMatchingElement(
-        `Form FormInput[name="${field}"]`
+        getInputSelector(field)
       );
     };
     for (let field in mockData) {
@@ -28,13 +53,10 @@ describe("<Signup />", () => {
     }
   });
   describe("User can enter values", () => {
-    const wrapper = shallow(<Signup />);
-    const getMockEvent = field => {
-      return { target: { name: field, value: mockData[field] } };
-    };
+    resetWrapper();
     const testField = field => {
-      const input = () => wrapper.find(`FormInput[name="${field}"]`).first();
-      input().simulate("change", getMockEvent(field));
+      const input = buildInputGetter(field);
+      input().simulate("change", getChangeEvent(field, mockData[field]));
       expect(input().prop("value")).toEqual(mockData[field]);
     };
 
@@ -45,14 +67,11 @@ describe("<Signup />", () => {
     }
   });
   describe("User can see which fields contain errors", () => {
-    const wrapper = shallow(<Signup />);
-    const getMockEvent = (name, value = "") => {
-      return { target: { name, value } };
-    };
+    resetWrapper();
     describe("Blank fields have no errors", () => {
       const testField = field => {
-        const input = () => wrapper.find(`FormInput[name="${field}"]`).first();
-        input().simulate("change", getMockEvent(field));
+        const input = buildInputGetter(field);
+        input().simulate("change", getChangeEvent(field));
         expect(input().prop("error")).toBeFalsy();
       };
       for (let field in mockData) {
@@ -63,17 +82,14 @@ describe("<Signup />", () => {
     });
     describe("User must enter valid data", () => {
       const testField = (field, data, str) => {
-        const input = () => wrapper.find(`FormInput[name="${field}"]`).first();
-        const form = () => wrapper.find("Form").first();
-        const message = () => wrapper.find("Form Message").first();
-
-        input().simulate("change", getMockEvent(field, data));
+        const input = buildInputGetter(field);
+        input().simulate("change", getChangeEvent(field, data));
 
         expect(input().prop("error")).toBeTruthy();
         expect(form().prop("error")).toBeTruthy();
         expect(message().prop("list")).toContain(str);
 
-        input().simulate("change", getMockEvent(field));
+        input().simulate("change", getChangeEvent(field));
       };
 
       describe("Checks the email field", () => {
@@ -130,15 +146,14 @@ describe("<Signup />", () => {
         });
 
         const checkSpecialCharacter = char => {
-          const input = () =>
-            wrapper.find('FormInput[name="password"]').first();
+          const input = buildInputGetter("password");
 
           input().simulate(
             "change",
-            getMockEvent("password", `12345678a${char}`)
+            getChangeEvent("password", `12345678a${char}`)
           );
           expect(input().prop("error")).toBeFalsy();
-          input().simulate("change", getMockEvent("password"));
+          input().simulate("change", getChangeEvent("password"));
         };
 
         for (const c of "~!@#$%^&*_-+=`|(){}[]:;\"'<>,.?/") {
@@ -155,43 +170,27 @@ describe("<Signup />", () => {
     });
   });
   describe("User sees a submit button", () => {
-    const wrapper = shallow(<Signup />);
+    resetWrapper();
     it("Submit button is enabled when all fields are filled in with valid data", () => {
       for (let field in mockData) {
-        wrapper
-          .find(`Form FormInput[name="${field}"]`)
-          .first()
-          .simulate("change", {
-            target: { name: field, value: mockData[field] }
-          });
+        getInput(field).simulate(
+          "change",
+          getChangeEvent(field, mockData[field])
+        );
       }
-      expect(
-        wrapper
-          .find("Form Button")
-          .first()
-          .prop("disabled")
-      ).toBeFalsy();
+      expect(submit().prop("disabled")).toBeFalsy();
     });
 
     for (let target in mockData) {
       it(`Submit button is disabled if ${target} is blank`, () => {
         for (let field in mockData) {
-          wrapper
-            .find(`Form FormInput[name="${field}"]`)
-            .first()
-            .simulate("change", {
-              target: {
-                name: field,
-                value: field === target ? "" : mockData[field]
-              }
-            });
+          getInput(field).simulate(
+            "change",
+            getChangeEvent(field, field === target ? "" : mockData[field])
+          );
         }
-        expect(
-          wrapper
-            .find("Form Button")
-            .first()
-            .prop("disabled")
-        ).toBeTruthy();
+
+        expect(submit().prop("disabled")).toBeTruthy();
       });
     }
 
@@ -224,22 +223,9 @@ describe("<Signup />", () => {
               : false;
             value = otherField ? otherField.value : mockData[field];
           }
-          wrapper
-            .find(`Form FormInput[name="${field}"]`)
-            .first()
-            .simulate("change", {
-              target: {
-                name: field,
-                value
-              }
-            });
+          getInput(field).simulate("change", getChangeEvent(field, value));
         }
-        expect(
-          wrapper
-            .find("Form Button")
-            .first()
-            .prop("disabled")
-        ).toBeTruthy();
+        expect(submit().prop("disabled")).toBeTruthy();
       });
     }
   });
