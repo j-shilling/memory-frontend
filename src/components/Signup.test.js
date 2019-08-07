@@ -4,6 +4,7 @@ import { shallow, mount } from "enzyme";
 import Signup from "./Signup";
 
 describe("<Signup />", () => {
+  // Valid Data
   const mockData = {
     name: "New Name",
     email: "new.name@email.com",
@@ -11,21 +12,30 @@ describe("<Signup />", () => {
     confirmPassword: "p@ssw0rd"
   };
 
+  // Get selectors
+  const getInputSelector = field => `Form FormInput[name="${field}"]`;
+  const getFormSelector = () => "Form";
+  const getMessageSelector = () => "Form Message";
+  const getSubmitSelector = () => "Form Button";
+
+  // Get a mock of the onChange event
   const getChangeEvent = (name, value = "") => {
     return { target: { name, value } };
   };
 
   const wrapper = shallow(<Signup />);
-  const form = () => wrapper.find("Form").first();
-  const message = () => wrapper.find("Form Message").first();
-  const submit = () => wrapper.find("Form Button").first();
+  // Node getters used in various describe blocks
+  const form = () => wrapper.find(getFormSelector()).first();
+  const message = () => wrapper.find(getMessageSelector()).first();
+  const submit = () => wrapper.find(getSubmitSelector()).first();
+  const getInput = field => wrapper.find(getInputSelector(field)).first();
 
-  const getInput = field => wrapper.find(`FormInput[name="${field}"]`).first();
-
+  // Some describe blocks use there own getters for input fields
   const buildInputGetter = field => {
     return () => getInput(field);
   };
 
+  // Fill in all input boxes with empty strings
   const resetWrapper = () => {
     const inputs = wrapper.find("Form FormInput");
     for (let i = 0; i < inputs.length; i++) {
@@ -34,26 +44,29 @@ describe("<Signup />", () => {
     }
   };
 
-  const getInputSelector = field => `Form FormInput[name="${field}"]`;
-
-  describe("User sees inputs", () => {
-    resetWrapper();
-    it("User sees a form element", () => {
-      expect(wrapper).toContainExactlyOneMatchingElement("Form");
+  describe("User can see all elements", () => {
+    it("User sees a form", () => {
+      expect(wrapper).toContainExactlyOneMatchingElement(getFormSelector());
     });
-    const testField = field => {
-      expect(wrapper).toContainExactlyOneMatchingElement(
-        getInputSelector(field)
-      );
-    };
-    for (let field in mockData) {
-      it(`User sees a ${field} input`, () => {
-        testField(field);
+    for (const field in mockData) {
+      it(`User sees ${field} input`, () => {
+        expect(wrapper).toContainExactlyOneMatchingElement(
+          getInputSelector(field)
+        );
       });
     }
+    it("User sees a button", () => {
+      expect(wrapper).toContainExactlyOneMatchingElement(getSubmitSelector());
+    });
+    it("User sees a link to the login page", () => {
+      expect(wrapper).toContainExactlyOneMatchingElement('Link[to="/login"]');
+    });
   });
   describe("User can enter values", () => {
     resetWrapper();
+    // For each field in mockData, fill in the corresponding input
+    // field and ensure that the onChange event actually changes its
+    // value
     const testField = field => {
       const input = buildInputGetter(field);
       input().simulate("change", getChangeEvent(field, mockData[field]));
@@ -69,18 +82,18 @@ describe("<Signup />", () => {
   describe("User can see which fields contain errors", () => {
     resetWrapper();
     describe("Blank fields have no errors", () => {
-      const testField = field => {
-        const input = buildInputGetter(field);
-        input().simulate("change", getChangeEvent(field));
-        expect(input().prop("error")).toBeFalsy();
-      };
+      resetWrapper();
       for (let field in mockData) {
         it(`${field} has no errors when blank`, () => {
-          testField(field);
+          expect(getInput(field).prop("error")).toBeFalsy();
         });
       }
     });
     describe("User must enter valid data", () => {
+      // For each field we need to enter an invalid value and make
+      // sure that 1) The input field has the error prop, 2) The Form
+      // field has the error prop, 3) The Message dialog shows the
+      // right error message.
       const testField = (field, data, str) => {
         const input = buildInputGetter(field);
         input().simulate("change", getChangeEvent(field, data));
@@ -89,6 +102,7 @@ describe("<Signup />", () => {
         expect(form().prop("error")).toBeTruthy();
         expect(message().prop("list")).toContain(str);
 
+        // undo the change we just made
         input().simulate("change", getChangeEvent(field));
       };
 
@@ -145,6 +159,10 @@ describe("<Signup />", () => {
           );
         });
 
+        // We want to make sure that all the characters we want are
+        // valid special characters in passwords. Fill in a password
+        // with exactly one special character and check that there are
+        // no errros
         const checkSpecialCharacter = char => {
           const input = buildInputGetter("password");
 
@@ -172,7 +190,7 @@ describe("<Signup />", () => {
   describe("User sees a submit button", () => {
     resetWrapper();
     it("Submit button is enabled when all fields are filled in with valid data", () => {
-      for (let field in mockData) {
+      for (const field in mockData) {
         getInput(field).simulate(
           "change",
           getChangeEvent(field, mockData[field])
@@ -181,9 +199,11 @@ describe("<Signup />", () => {
       expect(submit().prop("disabled")).toBeFalsy();
     });
 
-    for (let target in mockData) {
+    // For each field in mockData fill: leave it blank but fill in the
+    //others and make sure that the submit button is disabled
+    for (const target in mockData) {
       it(`Submit button is disabled if ${target} is blank`, () => {
-        for (let field in mockData) {
+        for (const field in mockData) {
           getInput(field).simulate(
             "change",
             getChangeEvent(field, field === target ? "" : mockData[field])
@@ -211,9 +231,16 @@ describe("<Signup />", () => {
       }
     ];
 
-    for (let data of mockInvalidData) {
+    // For each of the fields in mockInvalidData: fill in with invalid
+    // value, but fill the others in with valid data and check that
+    // submit button is disabled
+    for (const data of mockInvalidData) {
       it(`Submit button is disabled if ${data.name} contains errors`, () => {
-        for (let field in mockData) {
+        for (const field in mockData) {
+          // We need to figure out whether to fill in a valid value or
+          // and invalid value. If we are filling in a valid value,
+          // check whether to use mockData or a different value from
+          // mockInvalidData
           let value = "";
           if (field === data.name) {
             value = data.value;
