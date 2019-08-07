@@ -44,6 +44,10 @@ describe("<Signup />", () => {
     }
   };
 
+  it("Renders correctly", () => {
+    expect(wrapper).toMatchSnapshot();
+  });
+
   describe("User can see all elements", () => {
     it("User sees a form", () => {
       expect(wrapper).toContainExactlyOneMatchingElement(getFormSelector());

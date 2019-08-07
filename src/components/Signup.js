@@ -1,6 +1,6 @@
 import React from "react";
-import { Divider, Message, Button, Form } from "semantic-ui-react";
-import { Link } from 'react-router-dom';
+import { Card, Divider, Message, Button, Form } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -51,7 +51,8 @@ class Signup extends React.Component {
       errors.password =
         "Password should contain at least one of the following special characters: (~!@#$%^&*_-+=`|(){}[]:;\"'<>,.?/)";
     } else if (data.password && /\s/g.test(data.password)) {
-        errors.password = "Passwords should not include any whitespace characters (spaces, tabs, etc.)";
+      errors.password =
+        "Passwords should not include any whitespace characters (spaces, tabs, etc.)";
     } else {
       errors.password = "";
     }
@@ -85,52 +86,69 @@ class Signup extends React.Component {
     );
 
     return (
-      <Form error={errors.length > 0}>
-        <Message
-          error
-          header="Please address the following problems:"
-          list={errors}
-        />
-        <Form.Input
-          name="name"
-          placeholder="Name"
-          label="Display Name"
-          value={this.state.data.name}
-          onChange={this.handleInputChange}
-          error={!!this.state.errors.name}
-        />
-        <Divider />
-        <Form.Input
-          name="email"
-          placeholder="Email"
-          label="Email Address"
-          value={this.state.data.email}
-          onChange={this.handleInputChange}
-          error={!!this.state.errors.email}
-        />
-        <Form.Input
-          name="password"
-          type="password"
-          placeholder="Password"
-          label="Enter Password"
-          value={this.state.data.password}
-          onChange={this.handleInputChange}
-          error={!!this.state.errors.password}
-        />
-        <Form.Input
-          name="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-          label="Confirm Password"
-          value={this.state.data.confirmPassword}
-          onChange={this.handleInputChange}
-          error={!!this.state.errors.confirmPassword}
-        />
-        <Button disabled={!this.state.canSubmit} type="submit">
-          Submit
-        </Button>
-        <Link to="/login">login</ Link>
-      </Form>
+      <Card centered>
+        <Card.Content>
+          <Card.Content>
+            <Card.Header as="h1" textAlign="center">
+              Create an Account
+            </Card.Header>
+          </Card.Content>
+          <Form error={errors.length > 0}>
+            <Divider />
+            <Form.Input
+              required
+              name="name"
+              placeholder="Name"
+              label="Display Name"
+              value={this.state.data.name}
+              onChange={this.handleInputChange}
+              error={!!this.state.errors.name}
+            />
+            <Form.Input
+              required
+              name="email"
+              placeholder="Email"
+              label="Email Address"
+              value={this.state.data.email}
+              onChange={this.handleInputChange}
+              error={!!this.state.errors.email}
+            />
+            <Form.Input
+              required
+              name="password"
+              type="password"
+              placeholder="Password"
+              label="Enter Password"
+              value={this.state.data.password}
+              onChange={this.handleInputChange}
+              error={!!this.state.errors.password}
+            />
+            <Form.Input
+              required
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              label="Confirm Password"
+              value={this.state.data.confirmPassword}
+              onChange={this.handleInputChange}
+              error={!!this.state.errors.confirmPassword}
+            />
+            <Message
+              error
+              header="Fix the follow problems to submit:"
+              list={errors}
+            />
+            <Button disabled={!this.state.canSubmit} type="submit" fluid>
+              Submit
+            </Button>
+            <Divider />
+            <Form.Group>
+              <span>Already have an account?&nbsp;</span>
+              <Link to="/login">Login</Link>
+            </Form.Group>
+          </Form>
+        </Card.Content>
+      </Card>
     );
   }
 }
