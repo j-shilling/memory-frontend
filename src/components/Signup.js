@@ -1,5 +1,6 @@
 import React from "react";
 import { Divider, Message, Button, Form } from "semantic-ui-react";
+import { Link } from 'react-router-dom';
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -128,6 +129,7 @@ class Signup extends React.Component {
         <Button disabled={!this.state.canSubmit} type="submit">
           Submit
         </Button>
+        <Link to="/login">login</ Link>
       </Form>
     );
   }
