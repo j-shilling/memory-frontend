@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Signup /> Renders correctly 1`] = `
+<Card
+  centered={true}
+>
+  <CardContent>
+    <CardContent>
+      <CardHeader
+        as="h1"
+        textAlign="center"
+      >
+        Create an Account
+      </CardHeader>
+    </CardContent>
+    <Form
+      as="form"
+      error={false}
+    >
+      <Divider />
+      <FormInput
+        as={[Function]}
+        control={[Function]}
+        error={false}
+        label="Display Name"
+        name="name"
+        onChange={[Function]}
+        placeholder="Name"
+        required={true}
+        value=""
+      />
+      <FormInput
+        as={[Function]}
+        control={[Function]}
+        error={false}
+        label="Email Address"
+        name="email"
+        onChange={[Function]}
+        placeholder="Email"
+        required={true}
+        value=""
+      />
+      <FormInput
+        as={[Function]}
+        control={[Function]}
+        error={false}
+        label="Enter Password"
+        name="password"
+        onChange={[Function]}
+        placeholder="Password"
+        required={true}
+        type="password"
+        value=""
+      />
+      <FormInput
+        as={[Function]}
+        control={[Function]}
+        error={false}
+        label="Confirm Password"
+        name="confirmPassword"
+        onChange={[Function]}
+        placeholder="Confirm Password"
+        required={true}
+        type="password"
+        value=""
+      />
+      <Message
+        error={true}
+        header="Fix the follow problems to submit:"
+        list={Array []}
+      />
+      <Button
+        as="button"
+        disabled={true}
+        fluid={true}
+        type="submit"
+      >
+        Submit
+      </Button>
+      <Divider />
+      <FormGroup>
+        <span>
+          Already have an account? 
+        </span>
+        <Link
+          to="/login"
+        >
+          Login
+        </Link>
+      </FormGroup>
+    </Form>
+  </CardContent>
+</Card>
+`;
