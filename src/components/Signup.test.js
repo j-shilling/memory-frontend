@@ -10,6 +10,7 @@ describe("<Signup />", () => {
     password: "p@ssw0rd",
     confirmPassword: "p@ssw0rd"
   };
+
   describe("User sees inputs", () => {
     const wrapper = shallow(<Signup />);
     it("User sees a form element", () => {
@@ -17,7 +18,7 @@ describe("<Signup />", () => {
     });
     const testField = field => {
       expect(wrapper).toContainExactlyOneMatchingElement(
-        `FormInput[name="${field}"]`
+        `Form FormInput[name="${field}"]`
       );
     };
     for (let field in mockData) {
@@ -152,5 +153,94 @@ describe("<Signup />", () => {
         });
       });
     });
+  });
+  describe("User sees a submit button", () => {
+    const wrapper = shallow(<Signup />);
+    it("Submit button is enabled when all fields are filled in with valid data", () => {
+      for (let field in mockData) {
+        wrapper
+          .find(`Form FormInput[name="${field}"]`)
+          .first()
+          .simulate("change", {
+            target: { name: field, value: mockData[field] }
+          });
+      }
+      expect(
+        wrapper
+          .find("Form Button")
+          .first()
+          .prop("disabled")
+      ).toBeFalsy();
+    });
+
+    for (let target in mockData) {
+      it(`Submit button is disabled if ${target} is blank`, () => {
+        for (let field in mockData) {
+          wrapper
+            .find(`Form FormInput[name="${field}"]`)
+            .first()
+            .simulate("change", {
+              target: {
+                name: field,
+                value: field === target ? "" : mockData[field]
+              }
+            });
+        }
+        expect(
+          wrapper
+            .find("Form Button")
+            .first()
+            .prop("disabled")
+        ).toBeTruthy();
+      });
+    }
+
+    const mockInvalidData = [
+      { name: "email", value: "new.name" },
+      {
+        name: "password",
+        value: "asdf",
+        otherFields: [{ name: "confirmPassword", value: "asdf" }]
+      },
+      {
+        name: "confirmPassword",
+        value: mockData.password
+          .split("")
+          .reverse()
+          .join(""),
+        otherFields: [{ name: "password", value: mockData.password }]
+      }
+    ];
+
+    for (let data of mockInvalidData) {
+      it(`Submit button is disabled if ${data.name} contains errors`, () => {
+        for (let field in mockData) {
+          let value = "";
+          if (field === data.name) {
+            value = data.value;
+          } else {
+            const otherField = data.otherFields
+              ? data.otherFields.find(info => field === info.name)
+              : false;
+            value = otherField ? otherField.value : mockData[field];
+          }
+          wrapper
+            .find(`Form FormInput[name="${field}"]`)
+            .first()
+            .simulate("change", {
+              target: {
+                name: field,
+                value
+              }
+            });
+        }
+        expect(
+          wrapper
+            .find("Form Button")
+            .first()
+            .prop("disabled")
+        ).toBeTruthy();
+      });
+    }
   });
 });
